@@ -5,6 +5,9 @@ A basic Spin The Wheel with webpack, sass, es6, third-party library(jQuery, mome
 Original Wheel script from  [UsainBloot/wheel-of-lunc](http://UsainBloot.github.io/wheel-of-lunch)
 and Webpack script from [vikingmute/webpack-basic-starter](https://github.com/vikingmute/webpack-basic-starter)
 
+**Demo**
+[SpinTheWheel Demo](https://spinthewheel.herokuapp.com/)
+
 How is it work?
 **install the deps**
 we are testing library using npm(jquery, moment)
