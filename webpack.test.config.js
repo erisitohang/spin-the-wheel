@@ -15,23 +15,31 @@ module.exports = {
   },
   module: {
     loaders: [
-      {
-        test: /\.jsx?$/,
-        loader: 'babel',
-        include: APP_PATH,
-        query: {
-          presets: ['es2015']
-        }
-      },
-      {
-        test: /\.scss$/,
-        loaders: ['style', 'css', 'sass'],
-        include: APP_PATH
-      },
-      {
-        test: /\.(png|jpg)$/,
-        loader: 'url?limit=40000'
-      }
+        {
+            test: /\.jsx?$/,
+            loader: 'babel',
+            include: APP_PATH,
+            query: {
+                presets: ['es2015']
+            }
+        },
+        {
+            test: /\.scss$/,
+            loaders: ['style', 'css?sourceMap', 'sass?sourceMap'],
+            include: APP_PATH
+        },
+        {
+            test: /\.(png|jpg|jpeg|gif|ico)$/,
+            loader: 'file-loader?name=/imgs/[name].[ext]'
+        },
+        {
+            test: /\.(woff2?|ttf|eot|svg)$/,
+            loader: 'url?limit=10000'},
+        {
+            test: /bootstrap\/dist\/js\/umd\//,
+            loader: 'imports?jQuery=jquery'
+        },
+        { test: /\.json$/, loader: "file-loader?name=/data/[name].[ext]" }
     ]
   },
   devServer: {
@@ -45,5 +53,10 @@ module.exports = {
       title: 'Test case',
       template: path.resolve(TEM_PATH, 'test.html')
     }),
+      new webpack.ProvidePlugin({
+          jQuery: 'jquery',
+          $: 'jquery',
+          jquery: 'jquery'
+      })
   ]
 }

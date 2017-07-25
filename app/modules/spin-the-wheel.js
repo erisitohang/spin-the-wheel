@@ -10,6 +10,11 @@ import '../imgs/star.png';
 
 const defaultGift = require('./../data/gift.js');
 
+let Httpreq = new XMLHttpRequest(); // a new request
+Httpreq.open("GET", '/data/gift.json', false);
+Httpreq.send(null);
+const data = JSON.parse(Httpreq.responseText);
+
 export default class SpinTheWheel {
     constructor(selector) {
         this.canvas = document.getElementById(selector);
@@ -50,6 +55,7 @@ export default class SpinTheWheel {
                 arcAngle: null
             }
         };
+        localStorage.setItem('data', Httpreq.responseText);
     }
 
     run() {
@@ -115,56 +121,6 @@ export default class SpinTheWheel {
             if(!self.retIsSpinning()) {
                 self.spin(true);
             }
-        });
-
-        $(this.elems.selector).mousedown(function(e) {
-            self.data.drag.clickedX = e.pageX;
-            self.data.drag.clickedY = e.pageY;
-            //set up the first instance of previous drag
-            self.data.drag.previousDragX = e.pageX;
-            self.data.drag.previousDragY = e.pageY;
-            self.data.drag.isDragging = true;
-        });
-
-        $(this.elems.selector).mousemove(function(e) {
-            if(self.data.drag.isDragging && !self.retIsSpinning()) {
-                self.data.drag.currentDragX = e.pageX;
-                self.data.drag.currentDragY = e.pageY;
-
-                //finding the movement from the last drag
-                self.data.drag.changedAngle = Math.atan2(self.data.drag.currentDragY - $(SPIN_BUTTON).position().top, self.data.drag.currentDragX - $(SPIN_BUTTON).position().left);
-                self.data.drag.changedAngle -= Math.atan2(self.data.drag.previousDragY - $(SPIN_BUTTON).position().top, self.data.drag.previousDragX - $(SPIN_BUTTON).position().left);
-
-                //recalculating the arc from when the mouse was firsted click -- used to indicate a 'spin'
-                self.data.drag.arcAngle = Math.atan2(self.data.drag.currentDragY - $(SPIN_BUTTON).position().top, self.data.drag.currentDragX - $(SPIN_BUTTON).position().left);
-                self.data.drag.arcAngle -= Math.atan2(self.data.drag.clickedY - $(SPIN_BUTTON).position().top, self.data.drag.clickedX - $(SPIN_BUTTON).position().left);
-
-
-                //add whatever the angle has changed by from the last movement of the mouse
-                self.addToStartAngle(self.data.drag.changedAngle);
-                self.draw(true);
-
-                //update the previous with the current coordinate of the mouse
-                self.data.drag.previousDragY = self.data.drag.currentDragY;
-                self.data.drag.previousDragX = self.data.drag.currentDragX;
-            }
-        });
-
-        $(this.elems.selector).mouseup(function(e) {
-            if((self.data.drag.arcAngle >= 0.5) && !self.retIsSpinning() && self.data.drag.changedAngle > 0) { // a minimum delta of rad = 0.5 required to drag around the wheel to count as a 'spin'
-                self.spin(true);
-            } else if((self.data.drag.arcAngle < -4) && !self.retIsSpinning() && self.data.drag.changedAngle > 0) {
-                self.spin(true);
-            } else if((self.data.drag.arcAngle <= -0.5) && !self.retIsSpinning() && self.data.drag.changedAngle < 0) {
-                self.spin(false);
-            } else if((self.data.drag.arcAngle > 4) && !self.retIsSpinning() && self.data.drag.changedAngle < 0) {
-                self.spin(false);
-            }
-            self.data.drag.isDragging = false;
-        });
-
-        $(this.elems.selector).mouseout(function(e) {
-            self.data.drag.isDragging = false;
         });
     }
     printName(text, x, y, lineHeight, fitWidth) {
@@ -257,17 +213,17 @@ export default class SpinTheWheel {
         let arcd = this.data.arc * 180 / Math.PI;
         let index = Math.floor((360 - degrees % 360) / arcd);
         this.data.ctx.save();
-        console.log(arcd);
         if(degrees < 0) {
             degrees = Math.abs(degrees);
             index = Math.floor((degrees % 360) / arcd);
         }
 
         //WOL.app.lightbox.Result = new ResultLightbox(this.data.gifts[index]);
-        console.log(this.data.gifts[index]);
         this.data.ctx.restore();
     }
     addToStartAngle(angle) {
     }
 
+
+    addToStartAngle(angle) {}
 }
